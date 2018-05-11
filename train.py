@@ -70,7 +70,7 @@ class Trainer:
         if self.log_type == 'progressbar':
             # Progress bar
             processed_data_len = 0
-            bar = plugins.Bar('{:<10}'.format('Train'), max=data_len)
+            bar = plugins.Bar('{:<10}'.format('Train'), max=data_len//self.batch_size)
         end = time.time()
 
         with self.summary_writer.as_default():

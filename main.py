@@ -5,6 +5,7 @@ from __future__ import print_function
 import config
 import os
 import sys
+import traceback
 import time
 import datetime
 import tensorflow as tf
@@ -17,7 +18,7 @@ from dataloader import Dataloader
 from checkpoints import Checkpoints
 
 def main():
-    # parse the arguments
+    # Parse the Arguments
     args = config.parse_args()
     random.seed(args.manual_seed)
     tf.set_random_seed(args.manual_seed)
@@ -27,16 +28,14 @@ def main():
     if args.save_results:
         utils.saveargs(args)
 
-    # initialize the checkpoint class
+    # Initialize the Checkpoints Class
     checkpoints = Checkpoints(args)
 
     # Create Model
     models = Model(args)
     model, criterion, evaluation = models.setup(checkpoints)
 
-    # initialize a sample input to build the model for the first time and print its summary
-    batch = tf.zeros((1, args.nchannels, args.resolution_high, args.resolution_wide))
-    model(batch)
+    # Print Model Summary
     print('Model summary: {}'.format(model.name))
     print(model.summary())
 
@@ -44,19 +43,17 @@ def main():
     dataloader_obj = Dataloader(args)
     dataloader = dataloader_obj.create()
 
-    # initialize trainer and tester
+    # Initialize Trainer and Tester
     trainer = Trainer(args, model, criterion, evaluation)
     tester = Tester(args, model, criterion, evaluation)
 
-    # start training !!!
+    # Start Training !!!
     loss_best = 1e10
     for epoch in range(args.nepochs):
-        print('\nEpoch %d/%d\n' % (epoch + 1, args.nepochs))
+        print('\nEpoch %d/%d' % (epoch + 1, args.nepochs))
 
-        # train for a single epoch
-        print("Training...")
+        # Train and Test for a Single Epoch
         loss_train = trainer.train(epoch, dataloader["train"])
-        print("Testing...")
         loss_test = tester.test(epoch, dataloader["test"])
 
         if loss_best > loss_test:

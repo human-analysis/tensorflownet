@@ -4,6 +4,7 @@ import math
 import models
 import losses
 import evaluate
+import tensorflow as tf
 
 class Model:
     def __init__(self, args):
@@ -25,5 +26,9 @@ class Model:
             pass
         else:
             model = checkpoints.load(model, ckpt)
+
+        # initialize a sample input to build the model for the first time
+        batch = tf.zeros((1, self.args.nchannels, self.args.resolution_high, self.args.resolution_wide))
+        model(batch)
 
         return model, criterion, evaluation

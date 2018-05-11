@@ -27,7 +27,7 @@ def cleanup():
         except OSError as ex:
             raise Exception("wasn't able to kill the child process (pid:{}).".format(child.pid))
     #     # os.waitpid(child.pid, os.P_ALL)
-    print('\x1b[?25h', end='', flush=True)  # show cursor
+    print('\n\n\x1b[?25h', end='', flush=True)  # show cursor
     sys.exit(0)
 
 
